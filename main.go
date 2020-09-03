@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"net"
 )
@@ -10,21 +10,26 @@ import (
 func main() {
 	println("...")
 
-	netLiten, netListenError := net.Listen("tcp", ":8080")
+	netListen, netListenError := net.Listen("tcp", ":8080")
 	if (netListenError != nil) {
 		log.Panic(netListenError)
 	}
-	defer netLiten.Close()
+	defer netListen.Close()
 
 	for {
-		connection, connectionError := netLiten.Accept()
+		connection, connectionError := netListen.Accept()
 		if (connectionError != nil) {
-			log.Panic(connectionError)
+			log.Println(connectionError)
 		}
-
-		io.WriteString(connection, "\nOlá! Eu sou o seu servidor TCP.")
-		fmt.Fprintln(connection, "Como vai você?")
-
-		connection.Close()
+		go handle(connection)
 	}
+}
+
+func handle(connection net.Conn) {
+	scanner := bufio.NewScanner(connection)
+	for scanner.Scan() {
+		ln := scanner.Text()
+		fmt.Println(ln)
+	}
+	defer connection.Close()
 }
