@@ -1,2 +1,2 @@
-# go-tcpserver
-Creating a TCP server with Go
+# Go - TCP Server
+Criando um servidor TCP de forma educacional.
